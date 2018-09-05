@@ -1,0 +1,13 @@
+.container
+  .row.mt-4
+    .col
+      - users.each do |user|
+        .card{:style => "width: 18rem;"}
+          = image user.screenshot_path, width: '300px', class: 'card-img-top'
+          -# %img.card-img-top{:alt => "Card image cap", :src => ".../100px180/"}/
+          .card-body
+            %h5.card-title.mb-0=user.nickname
+            %small.card-subtitle.text-muted=screenshot_updated_time user
+            %p.card-text Channel: http://twitch.tv/#{user.twitch_link}
+            = link_to 'Edit User', routes.edit_user_path(user.id), class: ['btn', 'btn-primary']
+            = enable_worker_button user

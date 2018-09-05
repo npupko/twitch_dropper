@@ -1,0 +1,3 @@
+project=twitch_dropper
+test=rspec
+template=haml
