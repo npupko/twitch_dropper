@@ -9,10 +9,14 @@ module Services
 
     def loop_session!
       loop do
-        break unless worker_status?
+        close_session! && break unless worker_status?
         browser.save_and_open_screenshot(screenshot_path)
         sleep 30
       end
+    end
+
+    def close_session!
+      browser.reset!
     end
 
     def worker_status?
@@ -24,22 +28,23 @@ module Services
     end
 
     def setup_capybara!
-      Capybara.register_driver :chrome do |app|
-        Capybara::Selenium::Driver.new(app, browser: :chrome)
-      end
+      # Capybara.register_driver :chrome do |app|
+      #   Capybara::Selenium::Driver.new(app, browser: :chrome)
+      # end
 
-      Capybara.register_driver :headless_chrome do |app|
-        capabilities = Selenium::WebDriver::Remote::Capabilities.chrome(
-          chromeOptions: { args: %w(headless disable-gpu) }
-        )
+      # Capybara.register_driver :headless_chrome do |app|
+      #   capabilities = Selenium::WebDriver::Remote::Capabilities.chrome(
+      #     chromeOptions: { args: %w(headless disable-gpu) }
+      #   )
 
-        Capybara::Selenium::Driver.new app,
-          browser: :chrome,
-          desired_capabilities: capabilities
-      end
+      #   Capybara::Selenium::Driver.new app,
+      #     browser: :chrome,
+      #     desired_capabilities: capabilities
+      # end
 
-      Capybara.default_driver = :headless_chrome
-      Capybara.javascript_driver = :poltergeist
+      # Capybara.default_driver = :headless_chrome
+      # Capybara.javascript_driver = :poltergeist
+      Capybara.default_driver = :selenium_chrome_headless
     end
 
     def browser
@@ -48,6 +53,7 @@ module Services
 
     def open_login_form!
       browser.visit "https://twitch.tv/#{@user.twitch_link}"
+      browser.save_and_open_screenshot(screenshot_path)
       browser.find(:xpath, '//*[@id="root"]/div/div[2]/nav/div/div[5]/div/div[1]/button').click
     end
 
