@@ -1,13 +1,17 @@
-class WatchWorker
-  include Sidekiq::Worker
+require 'sidekiq/worker'
 
-  def perform(id)
-    Services::Watcher.new.call(user: user(id))
-  end
+module Workers
+  class WatchWorker
+    include Sidekiq::Worker
 
-  private
+    def perform(id)
+      Services::Watcher.new.call(user: user(id))
+    end
 
-  def user(id)
-    UserRepository.new.find(id)
+    private
+
+    def user(id)
+      UserRepository.new.find(id)
+    end
   end
 end

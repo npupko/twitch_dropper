@@ -4,7 +4,7 @@ module Web::Controllers::Users
 
     def call(params)
       UserRepository.new.update(params[:id], params[:user])
-      WatchWorker.perform_async(user.id) if worker_enabled?
+      Workers::WatchWorker.perform_async(user.id) if worker_enabled?
       redirect_to routes.root_path
     end
 
